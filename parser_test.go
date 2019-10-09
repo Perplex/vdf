@@ -1,5 +1,5 @@
 // Test taken from https://github.com/andygrunwald/vdf
-package main
+package vdf
 
 import (
 	"reflect"
