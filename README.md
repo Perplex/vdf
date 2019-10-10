@@ -1,7 +1,7 @@
 # vdf
 
-A Parser for [Valves Data Format (known as vdf)](https://developer.valvesoftware.com/wiki/KeyValues) written Go. 
-Comments are not preserved.
+A Parser for [Valves Data Format (known as vdf)](https://developer.valvesoftware.com/wiki/KeyValues) written in Go. 
+Comments are not preserved during parsing.
 
 ## Installation
 
@@ -28,7 +28,7 @@ firstkey
 ```
 
 
-In the above example firstkey would be a submap as it is of the type map[string]interface{}, while secondkey can either be a submap of a object. An object is defined as a map[string]string, so it is the final map structure before looping over values. Val1 and val2 are both values as there is no map structure below them. Querying for secondkey as a submap would look like this
+In the above example firstkey would be a submap as it is of the type map[string]interface{}, while secondkey can either be a submap or an object. An object is defined as a map[string]string, so it is the final map structure before looping over values. Val1 and val2 are both values as there is no map structure below them. Querying for secondkey as a submap would look like this
 
 ```go
 package main
