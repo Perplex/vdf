@@ -11,26 +11,26 @@ import (
 	"strings"
 )
 
-func ParseFile(filePath string) (*KeyValue, error) {
+func ParseFile(filePath string, caseInsensitive bool) (*KeyValue, error) {
 	f, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
 	}
 
-	return parse(bufio.NewScanner(f))
+	return parse(bufio.NewScanner(f), caseInsensitive)
 }
 
-func ParseReader(reader io.Reader) (*KeyValue, error) {
-	return parse(bufio.NewScanner(reader))
+func ParseReader(reader io.Reader, caseInsensitive bool) (*KeyValue, error) {
+	return parse(bufio.NewScanner(reader), caseInsensitive)
 }
 
-func ParseBytes(b []byte) (*KeyValue, error) {
+func ParseBytes(b []byte, caseInsensitive bool) (*KeyValue, error) {
 	r := bytes.NewReader(b)
-	return parse(bufio.NewScanner(r))
+	return parse(bufio.NewScanner(r), caseInsensitive)
 }
 
 // Based on https://github.com/rossengeorgiev/vdf-parser/blob/master/vdf.js
-func parse(scanner *bufio.Scanner) (*KeyValue, error) {
+func parse(scanner *bufio.Scanner, ci bool) (*KeyValue, error) {
 	regex, err := regexp.Compile(`"[^"\\]*(?:\\.[^"\\]*)*"`)
 	if err != nil {
 		return nil, err
@@ -70,6 +70,9 @@ func parse(scanner *bufio.Scanner) (*KeyValue, error) {
 			}
 
 			key := strings.Trim(m[0], `"`)
+			if ci {
+				key = strings.ToLower(key)
+			}
 			continuing := !strings.HasSuffix(line, `"`) || strings.HasSuffix(line, `\"`)
 
 			if len(m) == 1 && !continuing {
@@ -95,5 +98,5 @@ func parse(scanner *bufio.Scanner) (*KeyValue, error) {
 		return nil, errors.New("open parentheses somewhere")
 	}
 
-	return NewKeyValue(obj)
+	return NewKeyValue(obj, ci)
 }

@@ -194,7 +194,7 @@ func TestParser_ParseStatement(t *testing.T) {
 	}
 
 	for i, tt := range tests {
-		m, err := ParseReader(strings.NewReader(tt.s))
+		m, err := ParseReader(strings.NewReader(tt.s), false)
 		if !reflect.DeepEqual(tt.err, err) {
 			t.Errorf("%d. %q: error mismatch:\n  exp=%s\n  got=%s\n\n", i, tt.s, tt.err, err)
 		} else if tt.err == nil && !reflect.DeepEqual(tt.m, m.Raw) {

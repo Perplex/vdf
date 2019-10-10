@@ -4,30 +4,35 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strings"
 )
 
 // KeyValue wrapper around the raw parsed vdf file. When creating a new KeyValue use the provided function
 type KeyValue struct {
-	Raw map[string]interface{}
+	Raw             map[string]interface{}
+	caseInsensitive bool
 }
 
-// NewKeyValue creates a new key value struct
-func NewKeyValue(raw map[string]interface{}) (kv *KeyValue, err error) {
+// NewKeyValue creates a new key value struct, case flag default should be false
+func NewKeyValue(raw map[string]interface{}, caseInsensitive bool) (kv *KeyValue, err error) {
 	if len(raw) == 0 {
 		err = errors.New("raw map is empty")
 		return
 	}
 
-	kv = &KeyValue{Raw: raw}
+	kv = &KeyValue{Raw: raw, caseInsensitive: caseInsensitive}
 	return
 }
 
-func iterateToKey(submap map[string]interface{}, keys []string) (map[string]interface{}, error) {
+func iterateToKey(submap map[string]interface{}, keys []string, ci bool) (map[string]interface{}, error) {
 	if len(keys) == 0 {
 		return submap, nil
 	}
 
 	key := keys[0]
+	if ci {
+		key = strings.ToLower(key)
+	}
 
 	var sm interface{}
 	var ok bool
@@ -37,7 +42,7 @@ func iterateToKey(submap map[string]interface{}, keys []string) (map[string]inte
 
 	switch v := sm.(type) {
 	case map[string]interface{}:
-		return iterateToKey(v, keys[1:])
+		return iterateToKey(v, keys[1:], ci)
 	default:
 		err := fmt.Sprintf("final value needs to be map[string]interface, failed at key '%s'", key)
 		return nil, errors.New(err)
@@ -46,7 +51,7 @@ func iterateToKey(submap map[string]interface{}, keys []string) (map[string]inte
 
 // GetSubMap queries for a sub map based on the ordered keys provided
 func (k *KeyValue) GetSubMap(keys ...string) (kv *KeyValue, err error) {
-	resp, err := iterateToKey(k.Raw, keys)
+	resp, err := iterateToKey(k.Raw, keys, k.caseInsensitive)
 	if err != nil {
 		return
 	}
@@ -57,7 +62,7 @@ func (k *KeyValue) GetSubMap(keys ...string) (kv *KeyValue, err error) {
 
 // GetObject queries for an object (map[string]string) based on the ordered keys provided
 func (k *KeyValue) GetObject(keys ...string) (map[string]string, error) {
-	resp, err := iterateToKey(k.Raw, keys)
+	resp, err := iterateToKey(k.Raw, keys, k.caseInsensitive)
 
 	if err != nil {
 		return nil, err
@@ -81,7 +86,11 @@ func (k *KeyValue) GetObject(keys ...string) (map[string]string, error) {
 // GetValue queries for the value based on the ordered keys provided
 func (k *KeyValue) GetValue(keys ...string) (string, error) {
 	finalKey := keys[len(keys)-1]
-	resp, err := iterateToKey(k.Raw, keys[:len(keys)-1])
+	if k.caseInsensitive {
+		finalKey = strings.ToLower(finalKey)
+	}
+
+	resp, err := iterateToKey(k.Raw, keys[:len(keys)-1], k.caseInsensitive)
 	if err != nil {
 		return "", err
 	}
