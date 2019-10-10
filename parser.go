@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func ParseFile(filePath string) (*keyValue, error) {
+func ParseFile(filePath string) (*KeyValue, error) {
 	f, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
@@ -20,17 +20,17 @@ func ParseFile(filePath string) (*keyValue, error) {
 	return parse(bufio.NewScanner(f))
 }
 
-func ParseReader(reader io.Reader) (*keyValue, error) {
+func ParseReader(reader io.Reader) (*KeyValue, error) {
 	return parse(bufio.NewScanner(reader))
 }
 
-func ParseBytes(b []byte) (*keyValue, error) {
+func ParseBytes(b []byte) (*KeyValue, error) {
 	r := bytes.NewReader(b)
 	return parse(bufio.NewScanner(r))
 }
 
 // Based on https://github.com/rossengeorgiev/vdf-parser/blob/master/vdf.js
-func parse(scanner *bufio.Scanner) (*keyValue, error) {
+func parse(scanner *bufio.Scanner) (*KeyValue, error) {
 	regex, err := regexp.Compile(`"[^"\\]*(?:\\.[^"\\]*)*"`)
 	if err != nil {
 		return nil, err

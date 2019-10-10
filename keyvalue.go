@@ -6,17 +6,17 @@ import (
 	"reflect"
 )
 
-type keyValue struct {
+type KeyValue struct {
 	raw map[string]interface{}
 }
 
-func NewKeyValue(raw map[string]interface{}) (kv *keyValue, err error) {
+func NewKeyValue(raw map[string]interface{}) (kv *KeyValue, err error) {
 	if len(raw) == 0 {
 		err = errors.New("raw map is empty")
 		return
 	}
 
-	kv = &keyValue{raw: raw}
+	kv = &KeyValue{raw: raw}
 	return
 }
 
@@ -42,17 +42,17 @@ func iterateToKey(submap map[string]interface{}, keys []string) (map[string]inte
 	}
 }
 
-func (k *keyValue) GetSubMap(keys ...string) (kv *keyValue, err error) {
+func (k *KeyValue) GetSubMap(keys ...string) (kv *KeyValue, err error) {
 	resp, err := iterateToKey(k.raw, keys)
 	if err != nil {
 		return
 	}
 
-	kv = &keyValue{raw: resp}
+	kv = &KeyValue{raw: resp}
 	return
 }
 
-func (k *keyValue) GetObject(keys ...string) (map[string]string, error) {
+func (k *KeyValue) GetObject(keys ...string) (map[string]string, error) {
 	resp, err := iterateToKey(k.raw, keys)
 
 	if err != nil {
@@ -74,7 +74,7 @@ func (k *keyValue) GetObject(keys ...string) (map[string]string, error) {
 	return obj, nil
 }
 
-func (k *keyValue) GetValue(keys ...string) (string, error) {
+func (k *KeyValue) GetValue(keys ...string) (string, error) {
 	finalKey := keys[len(keys)-1]
 	resp, err := iterateToKey(k.raw, keys[:len(keys)-1])
 	if err != nil {
@@ -95,7 +95,7 @@ func (k *keyValue) GetValue(keys ...string) (string, error) {
 	}
 }
 
-func (k *keyValue) GetKeys() (keys []string) {
+func (k *KeyValue) GetKeys() (keys []string) {
 	for key := range k.raw {
 		keys = append(keys, key)
 	}
