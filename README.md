@@ -1,7 +1,7 @@
 # vdf
 
-A Parser for [Valves Data Format (known as vdf)](https://developer.valvesoftware.com/wiki/KeyValues) written Go. 
-Comments are not preserved.
+A Parser for [Valves Data Format (known as vdf)](https://developer.valvesoftware.com/wiki/KeyValues) written in Go. 
+Comments are not preserved during parsing.
 
 ## Installation
 
