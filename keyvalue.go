@@ -6,17 +6,19 @@ import (
 	"reflect"
 )
 
+// KeyValue wrapper around the raw parsed vdf file. When creating a new KeyValue use the provided function
 type KeyValue struct {
-	raw map[string]interface{}
+	Raw map[string]interface{}
 }
 
+// NewKeyValue creates a new key value struct
 func NewKeyValue(raw map[string]interface{}) (kv *KeyValue, err error) {
 	if len(raw) == 0 {
 		err = errors.New("raw map is empty")
 		return
 	}
 
-	kv = &KeyValue{raw: raw}
+	kv = &KeyValue{Raw: raw}
 	return
 }
 
@@ -42,18 +44,20 @@ func iterateToKey(submap map[string]interface{}, keys []string) (map[string]inte
 	}
 }
 
+// GetSubMap queries for a sub map based on the ordered keys provided
 func (k *KeyValue) GetSubMap(keys ...string) (kv *KeyValue, err error) {
-	resp, err := iterateToKey(k.raw, keys)
+	resp, err := iterateToKey(k.Raw, keys)
 	if err != nil {
 		return
 	}
 
-	kv = &KeyValue{raw: resp}
+	kv = &KeyValue{Raw: resp}
 	return
 }
 
+// GetObject queries for an object (map[string]string) based on the ordered keys provided
 func (k *KeyValue) GetObject(keys ...string) (map[string]string, error) {
-	resp, err := iterateToKey(k.raw, keys)
+	resp, err := iterateToKey(k.Raw, keys)
 
 	if err != nil {
 		return nil, err
@@ -74,9 +78,10 @@ func (k *KeyValue) GetObject(keys ...string) (map[string]string, error) {
 	return obj, nil
 }
 
+// GetValue queries for the value based on the ordered keys provided
 func (k *KeyValue) GetValue(keys ...string) (string, error) {
 	finalKey := keys[len(keys)-1]
-	resp, err := iterateToKey(k.raw, keys[:len(keys)-1])
+	resp, err := iterateToKey(k.Raw, keys[:len(keys)-1])
 	if err != nil {
 		return "", err
 	}
@@ -95,8 +100,9 @@ func (k *KeyValue) GetValue(keys ...string) (string, error) {
 	}
 }
 
+// GetKeys returns the keys at the root map
 func (k *KeyValue) GetKeys() (keys []string) {
-	for key := range k.raw {
+	for key := range k.Raw {
 		keys = append(keys, key)
 	}
 	return
