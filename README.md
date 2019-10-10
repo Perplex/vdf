@@ -14,6 +14,22 @@ $ go get github.com/perplex/vdf
 
 ## Usage
 
+The parser will return a KeyValue type that can handle querying for submaps, objects, and values without the need to worry about type assertions.
+
+```go
+firstkey
+{
+	secondkey
+	{
+		"attr1" "val1"
+		"attr2" "val2"
+	}
+}
+```
+
+
+In the above example firstkey would be a submap as it is of the type map[string]interface{}, while secondkey can either be a submap of a object. An object is defined as a map[string]string, so it is the final map structure before looping of values. Val1 and val2 are both values as there is no map structure below them. Querying for secondkey as a submap would look like this
+
 ```go
 package main
 
@@ -28,10 +44,17 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(obj)
+	
+	sm, err := obj.GetSubmap("firstkey", "secondkey")
+	if err != nil {
+		panic(err)
+	}
+	
+	fmt.Println(sm.GetKeys())
 }
 
 ```
+This would print attr1 and attr2.
 
 ## Inspiration
 
