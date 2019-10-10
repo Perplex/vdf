@@ -40,7 +40,7 @@ import (
 
 func main() {
 
-	obj, err := vdf.ParseFile("path/to/example.vdf")
+	obj, err := vdf.ParseFile("path/to/example.vdf", false)
 	if err != nil {
 		panic(err)
 	}
