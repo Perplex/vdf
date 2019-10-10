@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func ParseFile(filePath string) (map[string]interface{}, error) {
+func ParseFile(filePath string) (*keyValue, error) {
 	f, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
@@ -20,23 +20,23 @@ func ParseFile(filePath string) (map[string]interface{}, error) {
 	return parse(bufio.NewScanner(f))
 }
 
-func ParseReader(reader io.Reader) (map[string]interface{}, error) {
+func ParseReader(reader io.Reader) (*keyValue, error) {
 	return parse(bufio.NewScanner(reader))
 }
 
-func ParseBytes(b []byte) (map[string]interface{}, error) {
+func ParseBytes(b []byte) (*keyValue, error) {
 	r := bytes.NewReader(b)
 	return parse(bufio.NewScanner(r))
 }
 
 // Based on https://github.com/rossengeorgiev/vdf-parser/blob/master/vdf.js
-func parse(scanner *bufio.Scanner) (obj map[string]interface{}, err error) {
+func parse(scanner *bufio.Scanner) (*keyValue, error) {
 	regex, err := regexp.Compile(`"[^"\\]*(?:\\.[^"\\]*)*"`)
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	obj = make(map[string]interface{})
+	obj := make(map[string]interface{})
 	stack := []map[string]interface{}{obj}
 
 	expectBracket := false
@@ -95,5 +95,5 @@ func parse(scanner *bufio.Scanner) (obj map[string]interface{}, err error) {
 		return nil, errors.New("open parentheses somewhere")
 	}
 
-	return
+	return NewKeyValue(obj)
 }
