@@ -73,9 +73,8 @@ func parse(scanner *bufio.Scanner, ci bool) (*KeyValue, error) {
 			if ci {
 				key = strings.ToLower(key)
 			}
-			continuing := !strings.HasSuffix(line, `"`) || strings.HasSuffix(line, `\"`)
 
-			if len(m) == 1 && !continuing {
+			if continuing := lineContinues(line); len(m) == 1 && !continuing {
 				if _, ok := stack[len(stack)-1][key]; !ok {
 					stack[len(stack)-1][key] = make(map[string]interface{})
 				}
@@ -99,4 +98,21 @@ func parse(scanner *bufio.Scanner, ci bool) (*KeyValue, error) {
 	}
 
 	return NewKeyValue(obj, ci)
+}
+
+func lineContinues(line string) bool {
+	count := 0
+	for x := 0; x < len(line); x++ {
+		if line[x] == '"' {
+			if x == 0 {
+				continue
+			}
+
+			if line[x-1] != '\\' {
+				count++
+			}
+		}
+	}
+
+	return count%2 == 0 && count != 0
 }
