@@ -58,6 +58,5 @@ This would print attr1 and attr2.
 
 ## Inspiration
 
-This is based on the original fork of this repo from [andygrunwald](https://github.com/andygrunwald/vdf), and 
-[simple-vdf](https://github.com/rossengeorgiev/vdf-parser) which could handle duplicate keys and various other nuances 
-in vdf files.
+This is based on the original fork of this repo from [andygrunwald](https://github.com/andygrunwald/vdf) and 
+[simple-vdf](https://github.com/rossengeorgiev/vdf-parser).
