@@ -110,6 +110,8 @@ func lineContinues(line string) bool {
 
 			if line[x-1] != '\\' {
 				count++
+			} else if line[x-2] == '\\' {
+				count++
 			}
 		}
 	}
