@@ -109,6 +109,12 @@ func (k *KeyValue) GetValue(keys ...string) (string, error) {
 	}
 }
 
+// HasKey returns whether the given key exists
+func (k *KeyValue) HasKey(key string) bool {
+	_, ok := k.Raw[key]
+	return ok
+}
+
 // GetKeys returns the keys at the root map
 func (k *KeyValue) GetKeys() (keys []string) {
 	for key := range k.Raw {
